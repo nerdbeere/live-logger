@@ -2,8 +2,31 @@
 <html>
 <head>
     <title></title>
+    <script src="/components/jquery/jquery.min.js"></script>
+    <script src="/components/angular/angular.js"></script>
+    <script src="/components/bootstrap/js/bootstrap.min.js"></script>
+    <script src="http://127.0.0.1:3001/socket.io/socket.io.js"></script>
+    <script src="app/init.js"></script>
+    <script src="app/services/LogService.js"></script>
+    <script src="app/controllers/LogsController.js"></script>
+    <script src="app/app.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="components/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="layout/css/styles.css">
 </head>
-<body>
-    foobar
+<body ng-app="LiveLogger">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">LiveLogger</a>
+                <ul class="nav">
+                    <li class="active"><a href="#">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper container">
+        <ng-view></ng-view>
+    </div>
 </body>
 </html>

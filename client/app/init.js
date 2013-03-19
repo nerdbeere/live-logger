@@ -1,0 +1,5 @@
+LiveLogger = {
+	App: {},
+	Service: {},
+	Controller: {}
+};
