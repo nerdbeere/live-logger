@@ -15,6 +15,9 @@ angular.module('LiveLogger', [], function($provide) {
 		return {
 			get: function() {
 				return logs;
+			},
+			endAmqpConnection: function() {
+				socket.emit('endAmqpConnection');
 			}
 		}
 	}]);

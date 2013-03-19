@@ -3,7 +3,6 @@
  */
 
 var express = require('express')
-	, config = require('./config')
 	, logs = require('./modules/logs')
 	, http = require('http')
 	, path = require('path');
@@ -21,23 +20,7 @@ app.configure(function ()
 	app.use(express.static(path.join(__dirname + '/../', 'client/')));
 });
 
-var amqp = require('amqp');
-
-var connection = amqp.createConnection(config.rabbitmq);
-
-connection.on('ready', function () {
-
-	connection.queue('debugServer', {'durable': true, autoDelete: false}, function(q){
-
-		// Receive messages
-		q.subscribe(function (message, header, type) {
-			var key = type.routingKey;
-			var value = message.data.toString();
-
-			logs.incoming(key, value);
-		});
-	});
-});
+logs.init();
 
 app.configure('development', function ()
 {

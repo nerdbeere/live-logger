@@ -1,4 +1,7 @@
 <div class="logContainer">
+    <div>
+        <button ng-click="endAmqpConnection()" class="btn">end connection</button>
+    </div>
     <table class="table table-striped">
         <tr ng-repeat="log in logs">
             <td>{{log.key}}</td>
