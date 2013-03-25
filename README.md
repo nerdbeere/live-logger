@@ -9,7 +9,7 @@ live-logger
 
 Message Layout
 ===========
-```JSON
+```Javascript
 
     {
         head: {
