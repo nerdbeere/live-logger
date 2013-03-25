@@ -24,7 +24,13 @@ io.sockets.on('connection', function (socket) {
 setInterval(function() {
 
     for(var i in clients) {
-        clients[i].emit(clients[i].swapBatch(new Batch()).get());
+        var client = clients[i];
+
+        var batch = client.swapBatch(new Batch());
+
+        if(batch.length > 0) {
+            client.emit(batch.get());
+        }
     }
 }, 1000);
 
@@ -89,6 +95,7 @@ var Client = function(socket, batch) {
 var Batch = function() {
 
     var storage = {};
+    this.length = 0;
 
     this.add = function(route, content) {
 
@@ -98,6 +105,8 @@ var Batch = function() {
             console.log(e);
             return;
         }
+
+        this.length++;
 
         var hash = crypto.createHash('md5').update(content).digest('hex');
 
@@ -115,6 +124,5 @@ var Batch = function() {
     this.get = function() {
         return storage;
     }
-
 
 }
