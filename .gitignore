@@ -1,4 +1,6 @@
+.idea/
 .idea/*
 .DS_Store
 server/config.js
 example/config.php
+server/node_modules/*
