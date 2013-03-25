@@ -1,49 +1,120 @@
 var io = require('socket.io').listen(3001);
 var config = require('../config');
-
 var amqp = require('amqp');
+var crypto = require('crypto');
+
 var emit = function() { };
 var endAmqpConnection = function() {};
 
-io.sockets.on('connection', function (socket) {
-	emit = function(key, value) {
-		console.log(key, value);
-		socket.emit('log', { key: key, value: value });
-	};
 
-	socket.on('endAmqpConnection', function() {
-		endAmqpConnection();
-	});
+var clients = {};
+
+
+io.sockets.on('connection', function (socket) {
+
+    var client = new Client(socket, new Batch());
+
+    clients[client.id] = client;
+
+    //socket.on('endAmqpConnection', function() {
+        //endAmqpConnection();
+    //});
 });
 
-function incoming(key, value){
-	emit(key, value);
-};
+setInterval(function() {
+
+    for(var i in clients) {
+        clients[i].emit(clients[i].swapBatch(new Batch()).get());
+    }
+}, 1000);
+
+
 
 exports.init = function() {
 	var connection = amqp.createConnection(config.rabbitmq);
     connection.setMaxListeners(0);
 
-    endAmqpConnection = function() {
-		connection.end();
-	};
+    //endAmqpConnection = function() {
+        //connection.end();
+    //};
 
 	connection.on('ready', function () {
 
-		connection.queue('debugServer', {'durable': true, autoDelete: false}, function(q){
+		connection.queue('debugServer', {'durable': true, autoDelete: false}, function(queue){
 
 			// Receive messages
-			q.subscribe(function (message, header, type) {
-                console.log(message);
-                try {
-                    var key = type.routingKey;
-                    var value = JSON.parse(message.data.toString());
+            queue.subscribe(function (message, header, type) {
 
-                    incoming(key, value);
-                } catch (e) {
-                    console.log(e);
+                for(var i in clients) {
+                    clients[i].getBatch().add(type.routingKey, message.data.toString());
                 }
+
+                //try {
+                //    var key = type.routingKey;
+                //    var value = JSON.parse(message.data.toString());
+                //
+                //    batch.add(type.routingKey, message.data.toString());
+                //
+                //    incoming(key, value);
+                //} catch (e) {
+                //    console.log(e);
+                //}
 			});
 		});
 	});
 };
+
+
+var Client = function(socket, batch) {
+
+    this.id = socket.id;
+
+    this.swapBatch = function(newBatch) {
+        var oldBatch = batch;
+        batch = newBatch;
+        return oldBatch;
+    }
+
+    this.getBatch = function() {
+        return batch;
+    };
+
+    this.emit = function(value) {
+        socket.emit('log', value);
+    };
+
+};
+
+
+var Batch = function() {
+
+    var storage = {};
+
+    this.add = function(route, content) {
+
+        try {
+            var value = JSON.parse(content);
+        }catch(e) {
+            console.log(e);
+            return;
+        }
+
+        var hash = crypto.createHash('md5').update(content).digest('hex');
+
+        if(typeof storage[route] === 'undefined') {
+            storage[route] = {};
+        }
+
+        if(typeof storage[route][hash] === 'undefined') {
+            storage[route][hash] = [];
+        }
+
+        storage[route][hash].push(value);
+    }
+
+    this.get = function() {
+        return storage;
+    }
+
+
+}
