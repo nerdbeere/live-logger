@@ -1,7 +1,11 @@
-live-logger
+LiveLogger
 ===========
 
-live-logger
+cd live-logger/server
+npm install
+node app.js
+
+visit localhost:3000 with your browser
 
 
 
@@ -13,7 +17,7 @@ Message Layout
 
     {
         head: {
-            contentType: 'JSON'
+            contentType: 'JSON'|'TEXT'
         },
 
         body: {
