@@ -22,8 +22,9 @@ function incoming(key, value){
 
 exports.init = function() {
 	var connection = amqp.createConnection(config.rabbitmq);
+    connection.setMaxListeners(0);
 
-	endAmqpConnection = function() {
+    endAmqpConnection = function() {
 		connection.end();
 	};
 
@@ -33,10 +34,15 @@ exports.init = function() {
 
 			// Receive messages
 			q.subscribe(function (message, header, type) {
-				var key = type.routingKey;
-				var value = message.data.toString();
+                console.log(message);
+                try {
+                    var key = type.routingKey;
+                    var value = JSON.parse(message.data.toString());
 
-				incoming(key, value);
+                    incoming(key, value);
+                } catch (e) {
+                    console.log(e);
+                }
 			});
 		});
 	});

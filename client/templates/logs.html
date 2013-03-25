@@ -1,11 +1,13 @@
 <div class="logContainer">
     <div>
-        <button ng-click="endAmqpConnection()" class="btn">end connection</button>
+        <!--<button ng-click="endAmqpConnection()" class="btn">end connection</button>-->
     </div>
     <table class="table table-striped">
         <tr ng-repeat="log in logs">
             <td>{{log.key}}</td>
-            <td>{{log.value}}</td>
+            <td>
+                <ng-include src="'templates/partials/' + log.value.head.type + '.html'"></ng-include>
+            </td>
         </tr>
     </table>
 </div>
