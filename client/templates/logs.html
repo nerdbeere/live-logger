@@ -1,12 +1,21 @@
 <div class="logContainer">
-    <div>
-        <!--<button ng-click="endAmqpConnection()" class="btn">end connection</button>-->
+    <div class="row">
+        <div class="span6">
+            <select ng-model="keyFilter">
+                <option ng-value="''"></option>
+                <option ng-repeat="(key, val) in keys" ng-value="key">{{key}}</option>
+            </select>
+            <!--<input type="text" placeholder="filter" ng-model="keyFilter">-->
+        </div>
     </div>
     <table class="table table-striped">
-        <tr ng-repeat="log in logs">
-            <td>{{log.key}}</td>
+        <tr ng-repeat="(key, log) in logs" ng-show="log.key == keyFilter || keyFilter == ''">
+            <td style="border-left: 3px solid {{log.color}}" class="numCol">#{{key}}</td>
+            <td class="keyCol">{{log.key}}</td>
+            <td class="numCol"><span class="badge">{{log.count}}</span></td>
+            <td class="typeCol"><span class="label">{{log.data.head.type}}</span></td>
             <td>
-                <ng-include src="'templates/partials/' + log.value.head.type + '.html'"></ng-include>
+                <ng-include src="'templates/partials/' + log.data.head.type + '.html'"></ng-include>
             </td>
         </tr>
     </table>

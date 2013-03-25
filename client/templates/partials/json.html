@@ -1,3 +1,4 @@
-<pre>
-{{log.value.body|pretty}}
+<a href="" ng-click="log.showJson = !log.showJson">show</a>
+<pre ng-show="log.showJson">
+{{log.data.body|pretty}}
 </pre>
