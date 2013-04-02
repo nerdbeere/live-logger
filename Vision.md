@@ -32,35 +32,48 @@ Logging
 -------------
 
 ```PHP
-Log::beginScope();
+Log::assert('a', 'b'); //Spawns new anonymous scope and logs into it
 
-	Log::assert('myVar', $this->myVar);
+Log::beginScope(); //Spawns another anonymous scope
 
-	Log::beginScope('myScope');
+	Log::assert('myVar', $this->myVar); //logs into second anonymous scope
 
-		Log::assert('myVar', $this->myVar);
+	Log::beginScope('myScope'); //begins a named scope
 
-	Log::endScope();
+		Log::assert('myVar', $this->myVar); //logs into named scope
 
-Log::endScope();
+	Log::endScope(); //leaves current active scope
+
+Log::endScope(); //leaves current active scope
+
+Log::beginScope('myScope'); //enters previous named scope
+
+	Log::assert('c', 'stuff'); //logs into named scope
+	
+Log::endScope(); //leaves current active scope
 ```
 
 
 ```Javascript
 Scopes: [
 	{
+		id: 0,
+		data: {
+			a: 'b',
+		}
+	}
+	{
 		id: 1,
 		data: {
 			myVar: null,
-		},
-		children: ['myScope']
+		}
 	},
 	{
 		id: 'myScope',
 		data: {
 			myVar: true,
-		},
-		children: []
+			c: 'stuff'
+		}
 	}
 ]
 ```
