@@ -19,6 +19,11 @@ Prerequesites: rabbitmq, nodejs
 visit localhost:3000 with your browser
 
 
+Architecture
+-------------
+
+![Architecture](https://www.lucidchart.com/publicSegments/view/515bd458-3d98-4bc4-869b-6ea00a000771/image.png "Architecture")
+
 Message Layout
 -------------
 ```Javascript
